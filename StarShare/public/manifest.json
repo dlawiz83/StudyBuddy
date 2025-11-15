@@ -2,27 +2,32 @@
   "manifest_version": 3,
   "name": "StarShare",
   "version": "1.0.0",
-  "description": "Gamified coding companion (Study Buddy) for online IDEs",
+  "description": "Study Buddy, XP, levels and cosmetics on coding sites.",
   "action": {
     "default_popup": "index.html",
     "default_title": "StarShare"
   },
-  "permissions": ["storage", "activeTab", "scripting"],
+  "permissions": ["storage", "scripting", "activeTab"],
   "host_permissions": [
-    "*://*.replit.com/*",
-    "*://*.leetcode.com/*",
-    "*://colab.research.google.com/*",
-    "*://*.codingbat.com/*"
+    "https://replit.com/*",
+    "https://*.replit.com/*",
+    "https://leetcode.com/*",
+    "https://*.leetcode.com/*",
+    "https://colab.research.google.com/*",
+    "https://*.codingbat.com/*"
   ],
   "content_scripts": [
     {
       "matches": [
-        "*://*.replit.com/*",
-        "*://*.leetcode.com/*",
-        "*://colab.research.google.com/*",
-        "*://*.codingbat.com/*"
+        "https://replit.com/*",
+        "https://*.replit.com/*",
+        "https://leetcode.com/*",
+        "https://*.leetcode.com/*",
+        "https://colab.research.google.com/*",
+        "https://*.codingbat.com/*"
       ],
-      "js": ["content.js"]
+      "js": ["content.js"],
+      "run_at": "document_idle"
     }
   ]
 }
