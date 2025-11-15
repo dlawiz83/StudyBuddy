@@ -94,7 +94,7 @@ A popup UI (coming soon) will show:
 (implemented XP tracking, Run button detection, multi-site support, floating buddy interactions, and designed/built the full extension UI/UX)
 - **Alexander Nguyen - Gitbook documentation lead**
   (Make accessible and easy to read pages, record visuals for future reference)
-- **Libby Ben-Eliyahu - Contributed to the early stages of the project by helping develop the core idea, defining the project’s direction, and shaping its initial vision. **
+- **Libby Ben-Eliyahu - Contributed to the early stages of the project by helping develop the core idea, defining the project’s direction, and shaping its initial vision.**
   
 
 
@@ -105,6 +105,7 @@ This is an MVP build focused on core logic.
 UI animations, cosmetics, and polish will be added in the next phase.
 
 ---
+
 
 
 
