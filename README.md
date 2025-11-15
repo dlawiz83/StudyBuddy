@@ -90,8 +90,8 @@ A popup UI (coming soon) will show:
 ---
 
 ## 👥 Team
-- **Ayesha Dawodi — XP System, Multi-Site Detection, Floating Buddy, Core Logic**
-  (implemented XP tracking, Run button detection, site support, and main extension logic)
+- Ayesha Dawodi — XP System, Multi-Site Detection, Floating Buddy, UI/UX, Core Logic
+(implemented XP tracking, Run button detection, multi-site support, floating buddy interactions, and designed/built the full extension UI/UX)
 - **Alexander Nguyen - Gitbook documentation lead**
   (Make accessible and easy to read pages, record visuals for future reference)
 
@@ -104,4 +104,5 @@ This is an MVP build focused on core logic.
 UI animations, cosmetics, and polish will be added in the next phase.
 
 ---
+
 
