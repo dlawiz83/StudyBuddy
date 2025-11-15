@@ -1,78 +1,127 @@
+document.addEventListener("DOMContentLoaded", () => {
 
-(function () {
   const XP_RUN = 10;
-  const XP_FOCUS = 15; 
-  const FOCUS_INTERVAL = 300; 
+  const XP_FOCUS = 15;
+  const FOCUS_INTERVAL = 300;
 
+
+  function injectBuddy() {
+    if (document.getElementById("starshare-buddy")) return;
+
+    const buddy = document.createElement("div");
+    buddy.id = "starshare-buddy";
+    Object.assign(buddy.style, {
+      position: "fixed",
+      bottom: "20px",
+      right: "20px",
+      width: "65px",
+      height: "65px",
+      background: "#6366F1",
+      color: "white",
+      fontSize: "28px",
+      borderRadius: "50%",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      fontWeight: "bold",
+      cursor: "pointer",
+      zIndex: 999999,
+    });
+    buddy.textContent = "⭐";
+    document.body.appendChild(buddy);
+  }
+  injectBuddy();
+
+  // Toast 
+  function showToast(text) {
+    const t = document.createElement("div");
+    t.textContent = text;
+    Object.assign(t.style, {
+      position: "fixed",
+      right: "20px",
+      bottom: "120px",
+      padding: "8px 12px",
+      background: "rgba(0,0,0,0.75)",
+      color: "white",
+      borderRadius: "8px",
+      zIndex: 999999,
+      transition: "0.8s",
+    });
+    document.body.appendChild(t);
+    setTimeout(() => {
+      t.style.opacity = "0";
+      t.style.transform = "translateY(-20px)";
+    }, 200);
+    setTimeout(() => t.remove(), 1500);
+  }
+
+  // XP System 
   function addXP(amount) {
     chrome.storage.sync.get({ xp: 0 }, (res) => {
-      const newXP = (res.xp || 0) + amount;
+      const newXP = res.xp + amount;
       chrome.storage.sync.set({ xp: newXP });
       showToast(`+${amount} XP`);
-      // broadcast a message if popup open
-      try { chrome.runtime.sendMessage({ type: "xp_update", xp: newXP }); } catch(e) {}
+      try { chrome.runtime.sendMessage({ type: "xp_update", xp: newXP }); } catch {}
     });
   }
 
-  function showToast(text) {
-    try {
-      const t = document.createElement("div");
-      t.textContent = text;
-      Object.assign(t.style, {
-        position: "fixed",
-        right: "20px",
-        bottom: "120px",
-        zIndex: 999999,
-        padding: "8px 12px",
-        borderRadius: "8px",
-        background: "rgba(0,0,0,0.75)",
-        color: "white",
-        fontSize: "13px",
-      });
-      document.body.appendChild(t);
-      setTimeout(() => t.remove(), 1400);
-    } catch (e) {}
-  }
-
-  // Try binding 'Run' buttons heuristically
+  // Run Button Detection
   function bindRunButtons() {
-    const buttons = Array.from(document.querySelectorAll("button,input[type='button']"))
-      .filter(b => {
-        const t = (b.innerText || b.value || "").toLowerCase();
-        return /\brun\b|\bexecute\b|\brun\s*code\b|\brun\s*program\b|\brun\s*cell\b|\bplay\b/.test(t);
-      });
+   
+    const selectors = [
+      "button",
+      "input[type='button']",
+      "[role='button']",
+      "[aria-label='Run']",
+      "[data-cy='run-code-btn']",
+      "[data-cy='submit-btn']"
+    ];
+
+    const candidates = document.querySelectorAll(selectors.join(","));
+
+    const buttons = [...candidates].filter(btn => {
+      const t = (btn.innerText || btn.value || "").toLowerCase().trim();
+      return ["run", "submit", "execute", "play"].some(word => t.includes(word));
+    });
+
     buttons.forEach(btn => {
       if (btn.dataset.starshareBound) return;
       btn.dataset.starshareBound = "1";
-      btn.addEventListener("click", () => addXP(XP_RUN));
+
+      btn.addEventListener("click", () => {
+        addXP(XP_RUN);
+      });
     });
   }
 
-  // gives XP every 5 minutes active
+  // detect initial buttons
+  bindRunButtons();
+
+  // observe dynamic pages
+  const observer = new MutationObserver(() => bindRunButtons());
+  observer.observe(document.body, { childList: true, subtree: true });
+
+  //Focus XP 
   let activeSeconds = 0;
   setInterval(() => {
     if (document.visibilityState === "visible") activeSeconds++;
     if (activeSeconds > 0 && activeSeconds % FOCUS_INTERVAL === 0) {
       addXP(XP_FOCUS);
     }
-    bindRunButtons(); // keep rebinding for dynamic sites
   }, 1000);
 
-  // Try to detect problem completions
+  // Completion XP 
   function detectProblemCompletion() {
-    // Example: LeetCode changes DOM after success; this is a placeholder
-   
-    const successTexts = ["accepted", "congratulations", "all tests passed"];
-    const bodyText = document.body.innerText.toLowerCase();
-    successTexts.forEach(s => {
-      if (bodyText.includes(s) && !document.body.dataset.starshareCompleted) {
-        document.body.dataset.starshareCompleted = "1";
-        addXP(25); // reward for completion
-      }
-    });
-  }
-  setInterval(detectProblemCompletion, 3000);
+    const successWords = ["accepted", "all tests passed", "congratulations"];
+    const text = document.body.innerText.toLowerCase();
 
-  // initial bind
-  bindRunButtons();
-})();
+    if (!document.body.dataset.starshareCompleted &&
+        successWords.some(s => text.includes(s))) {
+      document.body.dataset.starshareCompleted = "1";
+      addXP(25);
+    }
+  }
+
+  setInterval(detectProblemCompletion, 2000);
+
+});

@@ -3,12 +3,21 @@
   "name": "StarShare",
   "version": "1.0.0",
   "description": "Study Buddy, XP, levels and cosmetics on coding sites.",
+
   "action": {
     "default_popup": "index.html",
     "default_title": "StarShare"
   },
-  "permissions": ["storage", "scripting", "activeTab"],
+
+  "permissions": [
+    "storage",
+    "scripting",
+    "activeTab",
+    "tabs"
+  ],
+
   "host_permissions": [
+    "*://*/*",
     "https://replit.com/*",
     "https://*.replit.com/*",
     "https://leetcode.com/*",
@@ -16,6 +25,7 @@
     "https://colab.research.google.com/*",
     "https://*.codingbat.com/*"
   ],
+
   "content_scripts": [
     {
       "matches": [
@@ -27,7 +37,8 @@
         "https://*.codingbat.com/*"
       ],
       "js": ["content.js"],
-      "run_at": "document_idle"
+      "run_at": "document_start",
+      "all_frames": true
     }
   ]
 }
